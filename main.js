@@ -2,7 +2,7 @@
  * MAIN.js
  * Combined script.js and util.js to create a mess of
  * a file as shown below.
- * 
+ *
  * Author: Alan
  * Date: 24 November 2025
  */
@@ -60,7 +60,6 @@ const BASIC_PIANO_SCALES = {
 };
 
 
-
 /**
  * AUDIO ENGINE!! BUT IT's HORRIBLE! Web Audio!!!!
  */
@@ -77,7 +76,6 @@ AudioEngine.prototype.stop = function () { };
 AudioEngine.prototype.setVolume = function (vol) { this.volume = vol; };
 AudioEngine.prototype.resume = function () { this.paused = false; };
 
-// Then your optimized AudioEngineWeb (from previous snippet)
 var AudioEngineWeb = function () {
   this.threshold = 0;
   this.sourcePool = [];
@@ -209,18 +207,6 @@ AudioEngineWeb.prototype.actualStop = function (id, time, part_id) {
 
   if (notes.length === 0) delete this.playings[id];
 };
-
-AudioEngineWeb.prototype.stop = function (id, delay_ms, part_id) {
-  var time = this.context.currentTime + delay_ms / 1000;
-  var delay = delay_ms - this.threshold;
-
-  if (delay <= 0) this.actualStop(id, time, part_id);
-  else this.worker.postMessage({
-    delay: delay,
-    args: { action: 1, id: id, time: time, part_id: part_id }
-  });
-};
-
 
 AudioEngineWeb.prototype.stop = function (id, delay_ms, part_id) {
   var time = this.context.currentTime + delay_ms / 1000;
@@ -444,8 +430,6 @@ CanvasRenderer.prototype.redraw = function () {
       var image = key.sharp ? this.blackKeyRender : this.whiteKeyRender;
       this.ctx.drawImage(image, x, y);
 
-      // NOTE LABELS REMOVED: original code drew key names here; removed per request.
-
       const highlightScale = BASIC_PIANO_SCALES[gHighlightScaleNotes];
       if (highlightScale && key.loaded) {
         var keyName = key.baseNote[0].toUpperCase();
@@ -574,7 +558,6 @@ SoundSelector.prototype.init = function () {
   var self = this;
   if (self.initialized) return console.warn("Sound selector already initialized!");
   if (!!Object.keys(self.loading).length) return setTimeout(function () { self.init(); }, 250);
-  // keep UI hookup optional - just load chosen pack
   self.initialized = true;
   self.loadPack(self.soundSelection, true);
 };
