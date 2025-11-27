@@ -343,7 +343,6 @@ CanvasRenderer.prototype.resize = function (width, height) {
     };
 
     return "#" + toHex(R_new) + toHex(G_new) + toHex(B_new);
-    Renderer.prototype.resize.call(this, width, height);
   }
   window.adjustColor = adjustColor;
   this.whiteKeyRender = document.createElement("canvas");
