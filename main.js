@@ -39,25 +39,7 @@ AudioEngine.prototype.resume = function () {
 
 AudioEngineWeb = function () {
   this.threshold = 0;
-  this.worker = new Worker("/workerTimer.js");
   var self = this;
-  this.worker.onmessage = function (event) {
-    if (event.data.args)
-      if (event.data.args.action == 0) {
-        self.actualPlay(
-          event.data.args.id,
-          event.data.args.vol,
-          event.data.args.time,
-          event.data.args.part_id,
-        );
-      } else {
-        self.actualStop(
-          event.data.args.id,
-          event.data.args.time,
-          event.data.args.part_id,
-        );
-      }
-  };
 };
 
 AudioEngineWeb.prototype = new AudioEngine();
@@ -142,18 +124,6 @@ AudioEngineWeb.prototype.play = function (id, vol, delay_ms, part_id) {
   var time = this.context.currentTime + delay_ms / 1000;
   var delay = delay_ms - this.threshold;
   if (delay <= 0) this.actualPlay(id, vol, time, part_id);
-  else {
-    this.worker.postMessage({
-      delay: delay,
-      args: {
-        action: 0,
-        id: id,
-        vol: vol,
-        time: time,
-        part_id: part_id,
-      },
-    });
-  }
 };
 
 AudioEngineWeb.prototype.actualStop = function (id, time, part_id) {
@@ -180,17 +150,6 @@ AudioEngineWeb.prototype.stop = function (id, delay_ms, part_id) {
   var time = this.context.currentTime + delay_ms / 1000;
   var delay = delay_ms - this.threshold;
   if (delay <= 0) this.actualStop(id, time, part_id);
-  else {
-    this.worker.postMessage({
-      delay: delay,
-      args: {
-        action: 1,
-        id: id,
-        time: time,
-        part_id: part_id,
-      },
-    });
-  }
 };
 
 AudioEngineWeb.prototype.setVolume = function (vol) {
@@ -536,8 +495,7 @@ CanvasRenderer.translateMouseEvent = function (evt) {
   return { x: (evt.pageX - offx) * (window.devicePixelRatio || 1), y: (evt.pageY - offy) * (window.devicePixelRatio || 1) };
 };
 
-if (window.location.hostname === "localhost") var soundDomain = `http://${location.host}`;
-else var soundDomain = "https://multiplayerpiano.net";
+var soundDomain = "https://multiplayerpiano.net";
 
 function SoundSelector(piano) {
   this.initialized = false;
